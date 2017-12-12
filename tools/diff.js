@@ -22,9 +22,9 @@ function transformer(data) {
   data.split('\n').forEach(line => {
     if (line.match(commit) && count !== 0) {
       arr.push('```\n\n')
-begin = false
-count = 0
-return
+      begin = false
+      count = 0
+      return
     }
 
 if (line.match(diff) && count === 0) {
@@ -39,7 +39,7 @@ if (begin && !line.match(/^\s*$/)) {
 }
   })
 
-arr.push('```\n\n')
+arr.push('```\n') 
 
 return arr.join('\n')
 }
