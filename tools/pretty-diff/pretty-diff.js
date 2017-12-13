@@ -71,7 +71,7 @@ let markUpDiff = function() {
     '-': 'delete',
     '+': 'insert',
     ' ': 'context'
-	}
+  }
 
   function escape(str) {
     return str
@@ -81,7 +81,7 @@ let markUpDiff = function() {
       .replace( /\t/g, '    ' );
   }
 
-	return function(diff) {
+  return function(diff) {
     let tmp = []
     let marker = false
     let idx
