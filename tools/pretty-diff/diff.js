@@ -30,9 +30,9 @@ module.exports = function(args, repo, fn) {
       fn(error)
     } else if (!stdout.length) {
       fn(null, null)
-	  } else {
+    } else {
       fn(null, splitByFile(stdout))
-	  }
+    }
   })
 }
 
