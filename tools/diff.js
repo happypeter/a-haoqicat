@@ -27,21 +27,21 @@ function transformer(data) {
       return
     }
 
-if (line.match(diff) && count === 0) {
-  arr.push('```diff\n' + line)
-  begin = true
-  count += 1
-  return
-}
+    if (line.match(diff) && count === 0) {
+      arr.push('```diff\n' + line)
+      begin = true
+      count += 1
+      return
+    }
 
-if (begin && !line.match(/^\s*$/)) {
-  arr.push(line)
-}
+    if (begin && !line.match(/^\s*$/)) {
+      arr.push(line)
+    }
   })
 
-arr.push('```\n') 
+  arr.push('```\n')
 
-return arr.join('\n')
+  return arr.join('\n')
 }
 
 function cmd(number) {
