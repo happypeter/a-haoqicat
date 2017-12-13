@@ -49,15 +49,15 @@ function getDiff(data) {
 }
 
 function generatePrettyDiff(parsedDiff, line) {
-  let template = fs.readFileSync(__dirname + '/' + process.argv[2], 'utf8');
-	let diffHtml = ''
+  let template = fs.readFileSync(__dirname + '/' + process.argv[2], 'utf8')
+  let diffHtml = ''
 
-	for (let file in parsedDiff) {
-		diffHtml += "<h2>" + file + "</h2>\n" +
-		"<div class='file-diff'>\n<div>\n" +
-			markUpDiff( parsedDiff[file] ) +
-		"\n</div>\n</div>"
-	}
+  for (let file in parsedDiff) {
+    diffHtml += "<h2>" + file + "</h2>\n" +
+    "<div class='file-diff'>\n<div>\n" +
+    markUpDiff( parsedDiff[file] ) +
+    "\n</div>\n</div>"
+  }
 
   const regex = new RegExp(line)
   fs.writeFileSync('test.md', template.replace(regex, diffHtml))
