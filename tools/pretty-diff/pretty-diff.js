@@ -64,39 +64,39 @@ function generatePrettyDiff(parsedDiff, line) {
 }
 
 let markUpDiff = function() {
-	let diffClasses = {
-		'd': 'file',
-		'i': 'file',
-		'@': 'info',
-		'-': 'delete',
-		'+': 'insert',
-		' ': 'context'
+  let diffClasses = {
+    'd': 'file',
+    'i': 'file',
+    '@': 'info',
+    '-': 'delete',
+    '+': 'insert',
+    ' ': 'context'
 	}
 
-	function escape(str) {
-		return str
-			.replace( /&/g, '&amp;' )
-			.replace( /</g, '&lt;' )
-			.replace( />/g, '&gt;' )
-			.replace( /\t/g, '    ' );
-	}
+  function escape(str) {
+    return str
+      .replace( /&/g, '&amp;' )
+      .replace( /</g, '&lt;' )
+      .replace( />/g, '&gt;' )
+      .replace( /\t/g, '    ' );
+  }
 
 	return function(diff) {
     let tmp = []
     let marker = false
     let idx
-		diff.forEach((line, index) => {
-			let type = line.charAt(0)
+    diff.forEach((line, index) => {
+      let type = line.charAt(0)
       if (type === '@' && marker === false) {
         marker = true
         idx = index
       }
       let text
       type === '@' ? text = line : text = line.slice(1)
-			tmp.push("<pre class='" + diffClasses[type] + "'>" + escape(text) + "</pre>")
-		})
+      tmp.push("<pre class='" + diffClasses[type] + "'>" + escape(text) + "</pre>")
+    })
     return tmp.slice(idx).join('\n')
-	}
+  }
 }()
 
 
