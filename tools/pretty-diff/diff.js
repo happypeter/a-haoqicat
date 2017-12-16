@@ -3,7 +3,7 @@ let spawn = require('child_process').spawn
 module.exports = function(args, repo, fn) {
   let stdout = ''
   let stderr = ''
-  let childArgs = ['diff', '--no-color']
+  let childArgs = ['show', '--no-color', '--pretty=format:%b']
   if (args) {
     childArgs = childArgs.concat(args.split(/\s/))
   }

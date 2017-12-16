@@ -1,13 +1,12 @@
 const fs = require('fs')
 const { exec } = require('child_process')
-const path = require( "path" )
 const diff = require('./diff')
 
 function readFile(file) {
   return new Promise((resolve, reject) => {
     fs.readFile(file, 'utf8', (err, data) => {
       if(err) {
-        return reject()
+        return reject(err)
       }
       return resolve(data)
     })
@@ -25,11 +24,13 @@ function commits(data) {
       })
     }
   })
+
   return Promise.resolve(commits)
 }
 
 function getDiff(data) {
   const repo = process.argv[3]
+
   diff(data.commit, repo, function(error, parsedDiff) {
     if (error) {
       // Usage error, assume we're not in a git directory
@@ -44,23 +45,25 @@ function getDiff(data) {
       console.log("No differences")
       return
     }
+
     generatePrettyDiff(parsedDiff, data.line)
   })
 }
 
 function generatePrettyDiff(parsedDiff, line) {
-  let template = fs.readFileSync(__dirname + '/' + process.argv[2], 'utf8')
+  let mdPath = __dirname + '/' + process.argv[2]
+  let md = fs.readFileSync(mdPath, 'utf8')
   let diffHtml = ''
 
   for (let file in parsedDiff) {
-    diffHtml += "<h2>" + file + "</h2>\n" +
-    "<div class='file-diff'>\n<div>\n" +
-    markUpDiff( parsedDiff[file] ) +
-    "\n</div>\n</div>"
+    diffHtml += "<div class='file-diff'>\n  <div class='file-name'>" + file + "</div>\n" +
+    "  <div class='diff'>\n" +
+      markUpDiff( parsedDiff[file] ) +
+    "\n  </div>\n</div>\n\n"
   }
 
   const regex = new RegExp(line)
-  fs.writeFileSync('test.md', template.replace(regex, diffHtml))
+  fs.writeFileSync(mdPath, md.replace(regex, diffHtml))
 }
 
 let markUpDiff = function() {
@@ -93,7 +96,7 @@ let markUpDiff = function() {
       }
       let text
       type === '@' ? text = line : text = line.slice(1)
-      tmp.push("<pre class='" + diffClasses[type] + "'>" + escape(text) + "</pre>")
+      tmp.push("    <pre class='" + diffClasses[type] + "'>" + escape(text) + "</pre>")
     })
     return tmp.slice(idx).join('\n')
   }
