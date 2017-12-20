@@ -28,7 +28,7 @@ function commits(data) {
   return Promise.resolve(commits)
 }
 
-function getDiff(data) {
+function getDiff(data, file) {
   const repo = process.argv[3]
 
   diff(data.commit, repo, function(error, parsedDiff) {
@@ -46,13 +46,13 @@ function getDiff(data) {
       return
     }
 
-    generatePrettyDiff(parsedDiff, data.line)
+    generatePrettyDiff(parsedDiff, data.line, file)
   })
 }
 
-function generatePrettyDiff(parsedDiff, line) {
-  let mdPath = __dirname + '/' + process.argv[2]
-  let md = fs.readFileSync(mdPath, 'utf8')
+function generatePrettyDiff(parsedDiff, line, file) {
+  let mdPath = file
+  let content = fs.readFileSync(mdPath, 'utf8')
   let diffHtml = '```\n'
 
   for (let file in parsedDiff) {
@@ -64,7 +64,7 @@ function generatePrettyDiff(parsedDiff, line) {
   diffHtml += '```\n'
 
   const regex = new RegExp(line)
-  fs.writeFileSync(mdPath, md.replace(regex, diffHtml))
+  fs.writeFileSync(mdPath, content.replace(regex, diffHtml))
 }
 
 let markUpDiff = function() {
@@ -91,18 +91,20 @@ let markUpDiff = function() {
 }()
 
 
-const mdFile = process.argv[2]
+const mdDir = process.argv[2]
 
-readFile(mdFile)
-  .then(data => {
-    return commits(data)
-  })
-  .then(commits => {
-    console.log('commits', commits)
-    commits.forEach(item => {
-      getDiff(item)
+fs.readdirSync(mdDir).forEach(file => {
+  if (file.split('.')[1] !== 'md') return
+  readFile(file)
+    .then(data => {
+      return commits(data)
     })
-  })
-  .catch(err => {
-    console.log(err)
-  })
+    .then(commits => {
+      commits.forEach(item => {
+        getDiff(item, file)
+      })
+    })
+    .catch(err => {
+      console.log(err)
+    })
+})
