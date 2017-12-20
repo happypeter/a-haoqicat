@@ -53,15 +53,14 @@ function getDiff(data) {
 function generatePrettyDiff(parsedDiff, line) {
   let mdPath = __dirname + '/' + process.argv[2]
   let md = fs.readFileSync(mdPath, 'utf8')
-  let diffHtml = '```\n'
+  let diffHtml = ''
 
   for (let file in parsedDiff) {
-    diffHtml += file + '\n' +
-      markUpDiff(parsedDiff[file]) +
-    '\n'
+    diffHtml += "<div class='file-diff'>\n  <div class='file-name'>" + file + "</div>\n" +
+    "  <div class='diff'>\n" +
+      markUpDiff( parsedDiff[file] ) +
+    "\n  </div>\n</div>\n\n"
   }
-
-  diffHtml += '```\n'
 
   const regex = new RegExp(line)
   fs.writeFileSync(mdPath, md.replace(regex, diffHtml))
@@ -77,16 +76,29 @@ let markUpDiff = function() {
     ' ': 'context'
   }
 
+  function escape(str) {
+    return str
+      .replace( /&/g, '&amp;' )
+      .replace( /</g, '&lt;' )
+      .replace( />/g, '&gt;' )
+      .replace( /\t/g, '    ' );
+  }
+
   return function(diff) {
+    let tmp = []
+    let marker = false
     let idx
-    for (let i = 0; i < diff.length; i++) {
-      let type = diff[i].charAt(0)
-      if (type === '@') {
-        idx = i
-        break
+    diff.forEach((line, index) => {
+      let type = line.charAt(0)
+      if (type === '@' && marker === false) {
+        marker = true
+        idx = index
       }
-    }
-    return diff.slice(idx).join('\n')
+      let text
+      type === '@' ? text = line : text = line.slice(1)
+      tmp.push("    <pre class='" + diffClasses[type] + "'>" + escape(text) + "</pre>")
+    })
+    return tmp.slice(idx).join('\n')
   }
 }()
 
@@ -98,7 +110,6 @@ readFile(mdFile)
     return commits(data)
   })
   .then(commits => {
-    console.log('commits', commits)
     commits.forEach(item => {
       getDiff(item)
     })
