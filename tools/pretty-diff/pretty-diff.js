@@ -68,15 +68,6 @@ function generatePrettyDiff(parsedDiff, line, filePath) {
 }
 
 let markUpDiff = function() {
-  let diffClasses = {
-    'd': 'file',
-    'i': 'file',
-    '@': 'info',
-    '-': 'delete',
-    '+': 'insert',
-    ' ': 'context'
-  }
-
   return function(diff) {
     let idx
     for (let i = 0; i < diff.length; i++) {
