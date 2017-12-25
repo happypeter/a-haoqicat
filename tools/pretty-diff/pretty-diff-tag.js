@@ -95,7 +95,7 @@ let markUpDiff = function() {
         idx = index
       }
       let text
-      type === '@' ? text = line : text = line.slice(1)
+      text = type === '@' ? line : line.slice(1)
       tmp.push("    <pre class='" + diffClasses[type] + "'>" + escape(text) + "</pre>")
     })
     return tmp.slice(idx).join('\n')
